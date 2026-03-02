@@ -140,16 +140,17 @@
 <body>
   <div class="input-card">
     <h1>Kokurikulum Merit Calculator</h1>
-  <p style="font-weight:bold; font-size:1.1rem; margin-top: 0.5rem; margin-bottom: 0.2rem;">Formula: (total / 110 × 10)</p>
+  <p style="font-weight:bold; font-size:1.1rem; margin-top: 0.5rem; margin-bottom: 0.2rem;">Formula: total/110 x 10</p>
   <p style="font-weight:bold; font-size:0.9rem; margin-top: 0.2rem; margin-bottom: 1rem;">This calculator helps determine your Cocurriculum Merit Score based on attendance, participations, achievements, positions and bonus points.</p>
 
   <label for="kehadiran">Kehadiran (maksimum 30)</label>
   <input type="number" id="kehadiran" min="0" max="30" value="0" />
 
-  <label for="penilaian">Penglibatan Berterusan / Penilaian Berterusan (maksimum 20)</label>
+  <label for="penilaian">Penilaian Berterusan (maksimum 20)</label>
   <input type="number" id="penilaian" min="0" max="20" value="0" />
 
   <label for="penglibatan">Penglibatan (20%)</label>
+
   <select id="penglibatan">
     <option value="20">Antara Matrikulasi/Zon/Kebangsaan</option>
     <option value="19">Peringkat Kolej/Negeri</option>
@@ -158,29 +159,34 @@
   </select>
 
   <label>Pencapaian (20%)</label>
+  <div style="margin-top:0.2rem; margin-bottom:0.4rem; font-size:0.85rem; font-style:italic; color:#03045E;">Pilih satu pencapaian tertinggi SAHAJA</div>
   <select id="pencapaian_matrik">
-    <option value="20">Antara Matrikulasi/Zon/Kebangsaan – Johan</option>
-    <option value="19">Antara Matrikulasi/Zon/Kebangsaan – Naib Johan</option>
-    <option value="18">Antara Matrikulasi/Zon/Kebangsaan – Ketiga</option>
-    <option value="17">Antara Matrikulasi/Zon/Kebangsaan – Penyertaan</option>
+    <option value="20">Antara Matrikulasi/Zon/Kebangsaan - Johan</option>
+    <option value="19">Antara Matrikulasi/Zon/Kebangsaan - Naib Johan</option>
+    <option value="18">Antara Matrikulasi/Zon/Kebangsaan - Ketiga</option>
+    <option value="17">Antara Matrikulasi/Zon/Kebangsaan - Penyertaan</option>
+    <option value="0">-</option>
   </select>
   <select id="pencapaian_kolej">
-    <option value="17">Peringkat Kolej/Negeri – Johan</option>
-    <option value="16">Peringkat Kolej/Negeri – Naib Johan</option>
-    <option value="15">Peringkat Kolej/Negeri – Ketiga</option>
-    <option value="14">Peringkat Kolej/Negeri – Penyertaan</option>
+    <option value="17">Peringkat Kolej/Negeri - Johan</option>
+    <option value="16">Peringkat Kolej/Negeri - Naib Johan</option>
+    <option value="15">Peringkat Kolej/Negeri - Ketiga</option>
+    <option value="14">Peringkat Kolej/Negeri - Penyertaan</option>
+    <option value="0">-</option>
   </select>
   <select id="pencapaian_praktikum">
-    <option value="14">Antara Praktikum – Johan</option>
-    <option value="13">Antara Praktikum – Naib Johan</option>
-    <option value="12">Antara Praktikum – Ketiga</option>
-    <option value="11">Antara Praktikum – Penyertaan</option>
+    <option value="14">Antara Praktikum - Johan</option>
+    <option value="13">Antara Praktikum - Naib Johan</option>
+    <option value="12">Antara Praktikum - Ketiga</option>
+    <option value="11">Antara Praktikum - Penyertaan</option>
+    <option value="0">-</option>
   </select>
   <select id="pencapaian_tutoran">
-    <option value="11">Tutoran/Praktikum/Kolej Kediaman – Johan</option>
-    <option value="10">Tutoran/Praktikum/Kolej Kediaman – Naib Johan</option>
-    <option value="9">Tutoran/Praktikum/Kolej Kediaman – Ketiga</option>
-    <option value="8">Tutoran/Praktikum/Kolej Kediaman – Penyertaan</option>
+    <option value="11">Tutoran/Praktikum/Kolej Kediaman - Johan</option>
+    <option value="10">Tutoran/Praktikum/Kolej Kediaman - Naib Johan</option>
+    <option value="9">Tutoran/Praktikum/Kolej Kediaman - Ketiga</option>
+    <option value="8">Tutoran/Praktikum/Kolej Kediaman - Penyertaan</option>
+    <option value="0">-</option>
   </select>
 
   <label for="jawatan">Jawatan (10%)</label>
@@ -221,25 +227,29 @@
       const jawatan = Number(document.getElementById('jawatan').value);
       const bonus = Number(document.getElementById('bonus').value);
 
-      const total =
+      // subtotal (without bonus) has a maximum of 100
+      const subtotal =
         kehadiran +
         penilaian +
         penglibatan +
         pencapaian +
-        jawatan +
-        bonus;
+        jawatan;
 
-      // maximum possible total is 110; formula uses total/110 × 10
-      const finalScore = (total / 110) * 10;
+      // rawTotal can reach 110 (subtotal 100 + bonus 10)
+      const rawTotal = subtotal + bonus;
+
+      // Merit score remains out of 10.
+      // If raw total reaches 100 or more, merit is automatically 10.
+      const meritScore = rawTotal >= 100 ? 10 : Math.min((rawTotal / 110) * 10, 10);
 
       const breakdown = `<div class="final-score-box">
-        <div class="final-score-label">Your Merit Score</div>
-        <div>${finalScore.toFixed(2)}</div>
+        <div class="final-score-label">Total (including bonus)</div>
+        <div>${meritScore.toFixed(2)}/10</div>
       </div>
       <div class="breakdown-container">
         <div class="breakdown-row">
           <div class="breakdown-item">• Kehadiran: ${kehadiran}/30</div>
-          <div class="breakdown-item">• Penglibatan Berterusan: ${penilaian}/20</div>
+          <div class="breakdown-item">• Penilaian Berterusan: ${penilaian}/20</div>
           <div class="breakdown-item">• Penglibatan: ${penglibatan}/20</div>
         </div>
         <div class="breakdown-row">
@@ -247,12 +257,11 @@
           <div class="breakdown-item">• Jawatan: ${jawatan}/10</div>
           <div class="breakdown-item">• Bonus: ${bonus}/10</div>
         </div>
-        <div class="breakdown-row full">
-          <div class="breakdown-item total">Total Score: ${total}/110</div>
-        </div>
       </div>`;
 
-      document.getElementById('result').innerHTML = breakdown;
+      const totalScore = `<div class="breakdown-item total" style="margin-top:1rem;">• Total Score: ${rawTotal}/110</div>`;
+
+      document.getElementById('result').innerHTML = breakdown + totalScore;
     }
 
     // Validate inputs and disable calculate button if any value exceeds max
@@ -268,6 +277,7 @@
         calculateBtn.disabled = false;
       }
     }
+    
 
     // Add event listeners to validate on input
     document.getElementById('kehadiran').addEventListener('input', validateInputs);

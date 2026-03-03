@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kokurikulum Merit Calculator</title>
+  <title>Kokurikulum Merit Kalkulator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -135,12 +135,15 @@
       font-weight: bold;
       width: 100%;
     }
+    .pencapaian-error {
+      border: 2px solid #d90429 !important;
+      background-color: #fff5f5;
+    }
   </style>
 </head>
 <body>
   <div class="input-card">
-    <h1>Kokurikulum Merit Calculator</h1>
-  <p style="font-weight:bold; font-size:1.1rem; margin-top: 0.5rem; margin-bottom: 0.2rem;">Formula: total/110 x 10</p>
+    <h1>Kokurikulum Merit Kalkulator</h1>
   <p style="font-weight:bold; font-size:0.9rem; margin-top: 0.2rem; margin-bottom: 1rem;">Kalkulator ini membantu menentukan Skor Merit Kokurikulum berdasarkan kehadiran, penyertaan, pencapaian, jawatan serta markah bonus.</p>
 
   <label for="kehadiran">Kehadiran (maksimum 30)</label>
@@ -152,6 +155,7 @@
   <label for="penglibatan">Penglibatan (20%)</label>
 
   <select id="penglibatan">
+    <option value="" selected disabled>Sila pilih</option>
     <option value="20">Antara Matrikulasi/Zon/Kebangsaan</option>
     <option value="19">Peringkat Kolej/Negeri</option>
     <option value="18">Antara Praktikum</option>
@@ -161,6 +165,7 @@
   <label>Pencapaian (20%)</label>
   <div style="margin-top:0.2rem; margin-bottom:0.4rem; font-size:0.85rem; font-style:italic; color:#03045E;">Pilih satu pencapaian tertinggi SAHAJA</div>
   <select id="pencapaian_matrik">
+    <option value="" selected disabled>Sila pilih</option>
     <option value="20">Antara Matrikulasi/Zon/Kebangsaan - Johan</option>
     <option value="19">Antara Matrikulasi/Zon/Kebangsaan - Naib Johan</option>
     <option value="18">Antara Matrikulasi/Zon/Kebangsaan - Ketiga</option>
@@ -168,6 +173,7 @@
     <option value="0">-</option>
   </select>
   <select id="pencapaian_kolej">
+    <option value="" selected disabled>Sila pilih</option>
     <option value="17">Peringkat Kolej/Negeri - Johan</option>
     <option value="16">Peringkat Kolej/Negeri - Naib Johan</option>
     <option value="15">Peringkat Kolej/Negeri - Ketiga</option>
@@ -175,6 +181,7 @@
     <option value="0">-</option>
   </select>
   <select id="pencapaian_praktikum">
+    <option value="" selected disabled>Sila pilih</option>
     <option value="14">Antara Praktikum - Johan</option>
     <option value="13">Antara Praktikum - Naib Johan</option>
     <option value="12">Antara Praktikum - Ketiga</option>
@@ -182,6 +189,7 @@
     <option value="0">-</option>
   </select>
   <select id="pencapaian_tutoran">
+    <option value="" selected disabled>Sila pilih</option>
     <option value="11">Tutoran/Praktikum/Kolej Kediaman - Johan</option>
     <option value="10">Tutoran/Praktikum/Kolej Kediaman - Naib Johan</option>
     <option value="9">Tutoran/Praktikum/Kolej Kediaman - Ketiga</option>
@@ -191,6 +199,7 @@
 
   <label for="jawatan">Jawatan (10%)</label>
   <select id="jawatan">
+    <option value="" selected disabled>Sila pilih</option>
     <option value="10">YDP/NYDP/Setiausaha Agong JPP/Bendahari JPP/Exco JPP / Imam</option>
     <option value="9">Pengerusi/Ketua Pasukan/Ketua dalam pelbagai aktiviti peringkat kolej</option>
     <option value="8">Timbalan Pengerusi/Setiausaha/Bendahari dalam pelbagai aktiviti</option>
@@ -201,6 +210,7 @@
 
   <label for="bonus">Bonus (10%)</label>
   <select id="bonus">
+    <option value="" selected disabled>Sila pilih</option>
     <option value="10">Anugerah Kecemerlangan Kokurikulum / YDP JPP / Mewakili(2) peringkat kebangsaan/antarabangsa</option>
     <option value="9">Terlibat sekurang-kurangnya (1) pertandingan atau aktiviti peringkat kebangsaan/antarabangsa atau sekurang-kurangnya (3) aktiviti kolej/jabatan</option>
     <option value="8">Terlibat sekurang-kurangnya (2) aktiviti dalam mana-mana kategori kokurikulum peringkat kolej/jabatan</option>
@@ -212,7 +222,74 @@
   <div id="result"></div>
 
   <script>
+    function isFormValid() {
+      const kehadiranEl = document.getElementById('kehadiran');
+      const penilaianEl = document.getElementById('penilaian');
+      const kehadiran = Number(kehadiranEl.value);
+      const penilaian = Number(penilaianEl.value);
+
+      const numbersValid =
+        kehadiranEl.value.trim() !== '' &&
+        penilaianEl.value.trim() !== '' &&
+        kehadiran >= 0 && kehadiran <= 30 &&
+        penilaian >= 0 && penilaian <= 20;
+
+      const requiredSelectIds = [
+        'penglibatan',
+        'jawatan',
+        'bonus'
+      ];
+
+      const allRequiredSelected = requiredSelectIds.every((id) => {
+        const el = document.getElementById(id);
+        return el.value !== '';
+      });
+
+      const pencapaianIds = [
+        'pencapaian_matrik',
+        'pencapaian_kolej',
+        'pencapaian_praktikum',
+        'pencapaian_tutoran'
+      ];
+
+      const pencapaianValues = pencapaianIds.map((id) => document.getElementById(id).value);
+      const allPencapaianChosen = pencapaianValues.every((value) => value !== '');
+      const selectedPencapaianCount = pencapaianValues.filter((value) => Number(value) > 0).length;
+      const exactlyOnePencapaianSelected = selectedPencapaianCount === 1;
+
+      return numbersValid && allRequiredSelected && allPencapaianChosen && exactlyOnePencapaianSelected;
+    }
+
+    function updatePencapaianErrorState() {
+      const pencapaianIds = [
+        'pencapaian_matrik',
+        'pencapaian_kolej',
+        'pencapaian_praktikum',
+        'pencapaian_tutoran'
+      ];
+
+      const selectedCount = pencapaianIds
+        .map((id) => Number(document.getElementById(id).value || 0))
+        .filter((value) => value > 0).length;
+
+      const hasMultipleSelections = selectedCount > 1;
+
+      pencapaianIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (hasMultipleSelections) {
+          el.classList.add('pencapaian-error');
+        } else {
+          el.classList.remove('pencapaian-error');
+        }
+      });
+    }
+
     function kira() {
+      updatePencapaianErrorState();
+      if (!isFormValid()) {
+        return;
+      }
+
       const kehadiran = Number(document.getElementById('kehadiran').value);
       const penilaian = Number(document.getElementById('penilaian').value);
       const penglibatan = Number(document.getElementById('penglibatan').value);
@@ -259,29 +336,27 @@
         </div>
       </div>`;
 
-      const totalScore = `<div class="breakdown-item total" style="margin-top:1rem;">• Total Score: ${rawTotal}/110</div>`;
-
-      document.getElementById('result').innerHTML = breakdown + totalScore;
+      document.getElementById('result').innerHTML = breakdown;
     }
 
-    // Validate inputs and disable calculate button if any value exceeds max
+    // Validate all required fields before enabling calculate button
     function validateInputs() {
-      const kehadiran = Number(document.getElementById('kehadiran').value);
-      const penilaian = Number(document.getElementById('penilaian').value);
       const calculateBtn = document.getElementById('calculate');
-
-      // Check if values are within limits
-      if (kehadiran > 30 || penilaian > 20) {
-        calculateBtn.disabled = true;
-      } else {
-        calculateBtn.disabled = false;
-      }
+      updatePencapaianErrorState();
+      calculateBtn.disabled = !isFormValid();
     }
     
 
-    // Add event listeners to validate on input
+    // Add event listeners to validate on input/change
     document.getElementById('kehadiran').addEventListener('input', validateInputs);
     document.getElementById('penilaian').addEventListener('input', validateInputs);
+    document.getElementById('penglibatan').addEventListener('change', validateInputs);
+    document.getElementById('pencapaian_matrik').addEventListener('change', validateInputs);
+    document.getElementById('pencapaian_kolej').addEventListener('change', validateInputs);
+    document.getElementById('pencapaian_praktikum').addEventListener('change', validateInputs);
+    document.getElementById('pencapaian_tutoran').addEventListener('change', validateInputs);
+    document.getElementById('jawatan').addEventListener('change', validateInputs);
+    document.getElementById('bonus').addEventListener('change', validateInputs);
 
     // Initial validation
     validateInputs();

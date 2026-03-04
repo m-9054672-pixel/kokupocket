@@ -139,12 +139,27 @@
       border: 2px solid #d90429 !important;
       background-color: #fff5f5;
     }
+    .side-brand {
+      position: fixed;
+      left: 12px;
+      top: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #03045E;
+      opacity: 0.7;
+      z-index: 3;
+      user-select: none;
+      pointer-events: none;
+      text-shadow: 0 2px 8px rgba(3, 4, 94, 0.28);
+    }
   </style>
 </head>
 <body>
+  <div class="side-brand">kokupocket</div>
   <div class="input-card">
     <h1>Kokurikulum Merit Kalkulator</h1>
-  <p style="font-weight:bold; font-size:0.9rem; margin-top: 0.2rem; margin-bottom: 1rem;">Kalkulator ini membantu menentukan Skor Merit Kokurikulum berdasarkan kehadiran, penyertaan, pencapaian, jawatan serta markah bonus.</p>
+  <p style="font-weight:bold; font-size:0.9rem; margin-top: 0.2rem; margin-bottom: 1rem;">Kalkulator ini membantu menentukan Skor Merit Kokurikulum berdasarkan kehadiran, penilaian berterusan, penglibatan, pencapaian, jawatan serta markah bonus.</p>
 
   <label for="kehadiran">Kehadiran (maksimum 30)</label>
   <input type="number" id="kehadiran" min="0" max="30" value="0" />
